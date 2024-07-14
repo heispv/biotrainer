@@ -40,8 +40,7 @@ class EmbedderInterface(abc.ABC):
         ------
         - This method should be implemented by subclasses.
         """
-
-        raise NotImplementedError
+        pass
 
     @staticmethod
     def _preprocess_sequences(sequences: Iterable[str]) -> List[str]:
