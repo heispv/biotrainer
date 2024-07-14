@@ -69,10 +69,24 @@ class EmbedderInterface(abc.ABC):
         return sequences_cleaned
 
     def _embed_batch(self, batch: List[str]) -> Generator[ndarray, None, None]:
-        """Computes the embeddings from all sequences in the batch
+        """
+        Compute embeddings for all sequences in a given batch.
 
-        The provided implementation is dummy implementation that should be
-        overwritten with the appropriate batching method for the model."""
+        This method serves as a placeholder and is intended to be overridden by subclasses
+        to implement specific batching strategies suitable for the model in use. The current
+        implementation iterates through the batch and yields embeddings for each sequence
+        individually using the _embed_single method.
+
+        Parameters:
+        -----------
+        batch : List[str]
+            A list of amino acid sequences to be embedded.
+
+        Yields:
+        -------
+        Generator[ndarray, None, None]
+            A generator yielding the ndarray embeddings for each sequence in the batch.
+        """
         for sequence in batch:
             yield self._embed_single(sequence)
 
