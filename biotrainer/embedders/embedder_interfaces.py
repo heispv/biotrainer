@@ -94,11 +94,24 @@ class EmbedderInterface(abc.ABC):
             self, sequences: Iterable[str], batch_size: Optional[int] = None
     ) -> Generator[ndarray, None, None]:
         """
-        Yields embedding for one sequence at a time.
+        Yields embeddings for each protein sequence, processed either individually or in batches.
 
-        :param sequences: List of proteins as AA strings
-        :param batch_size: For embedders that profit from batching, this is maximum number of AA per batch
-        :return: A list object with embeddings of the sequences.
+        This method handles sequences by either processing each one individually or in batches, depending 
+        on the batch_size provided. Sequences longer than the batch_size are processed individually with a 
+        warning. It preprocesses the sequences to standardize them before embedding.
+
+        Parameters:
+        -----------
+        sequences : Iterable[str]
+            An iterable of protein sequences represented as strings of amino acids.
+        batch_size : Optional[int]
+            The maximum number of amino acids per batch. If None, all sequences are processed individually.
+
+        Yields:
+        -------
+        Generator[ndarray, None, None]
+            A generator yielding the ndarray embeddings for each sequence. The embedding process might be 
+            batched for efficiency if a batch_size is provided.
         """
         sequences = self._preprocess_sequences(sequences)
 
