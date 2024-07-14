@@ -24,10 +24,21 @@ class EmbedderInterface(abc.ABC):
     @abc.abstractmethod
     def _embed_single(self, sequence: str) -> ndarray:
         """
-        Returns embedding for one sequence.
+        Generate an embedding for a given amino acid sequence.
 
-        :param sequence: Valid amino acid sequence as String
-        :return: An embedding of the sequence.
+        Parameters:
+        -----------
+        sequence : str
+            A string representing a valid amino acid sequence.
+
+        Returns:
+        --------
+        ndarray
+            A NumPy array representing the embedding of the sequence.
+
+        Notes:
+        ------
+        - This method should be implemented by subclasses.
         """
 
         raise NotImplementedError
