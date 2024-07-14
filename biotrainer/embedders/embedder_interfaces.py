@@ -45,7 +45,26 @@ class EmbedderInterface(abc.ABC):
 
     @staticmethod
     def _preprocess_sequences(sequences: Iterable[str]) -> List[str]:
-        # Remove rare amino acids
+        """
+        Preprocess a list of amino acid sequences by replacing rare amino acids.
+
+        Parameters:
+        -----------
+        sequences : Iterable[str]
+            An iterable collection of strings, each representing an amino acid sequence.
+
+        Returns:
+        --------
+        List[str]
+            A list of strings where rare amino acids (U, Z, O, B) have been replaced with 'X'.
+
+        Notes:
+        ------
+        - The replacement helps standardize sequences for further processing.
+        - Rare amino acids U (Selenocysteine), Z (Glutamic acid or Glutamine), O (Pyrrolysine),
+          and B (Asparagine or Aspartic acid) are replaced because they may not be recognized
+          by some processing functions or databases.
+        """
         sequences_cleaned = [re.sub(r"[UZOB]", "X", sequence) for sequence in sequences]
         return sequences_cleaned
 
