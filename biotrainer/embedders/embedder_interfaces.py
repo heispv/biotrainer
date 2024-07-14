@@ -116,25 +116,28 @@ class EmbedderInterface(abc.ABC):
 
         if batch_size:
             batch = []
-            length = 0
+            accumulated_length = 0
+            
             for sequence in sequences:
-                if len(sequence) > batch_size:
-                    logger.warning(
-                        f"A sequence is {len(sequence)} residues long, "
-                        f"which is longer than your `batch_size` parameter which is {batch_size}"
-                    )
+                sequence_length = len(sequence)
+                if sequence_length > batch_size:
+                    logger.warning(f"Sequence length {sequence_length} exceeds batch size {batch_size}. Processing individually.")
                     yield from self._embed_batch([sequence])
                     continue
-                if length + len(sequence) >= batch_size:
+                
+                if accumulated_length + sequence_length >= batch_size:
                     yield from self._embed_batch(batch)
                     batch = []
-                    length = 0
+                    accumulated_length = 0
+                    
                 batch.append(sequence)
-                length += len(sequence)
-            yield from self._embed_batch(batch)
+                accumulated_length += sequence_length
+            
+            if batch:
+                yield from self._embed_batch(batch)
         else:
-            for seq in sequences:
-                yield self._embed_single(seq)
+            for sequence in sequences:
+                yield self._embed_single(sequence)
 
     @staticmethod
     def reduce_per_protein(embedding: ndarray) -> ndarray:
