@@ -2,12 +2,13 @@
 # bio_embeddings repository (https://github.com/sacdallago/bio_embeddings)
 # Original file: https://github.com/sacdallago/bio_embeddings/blob/efb9801f0de9b9d51d19b741088763a7d2d0c3a2/bio_embeddings/embed/one_hot_encoding_embedder.py
 
-import numpy
-from numpy import ndarray
+import numpy as np
 
 from .embedder_interfaces import EmbedderInterface
 
-AMINO_ACIDS = numpy.asarray(list("ACDEFGHIKLMNPQRSTVWXY"))
+AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWXY"
+index_map = {aa: idx for idx, aa in enumerate(AMINO_ACIDS)}
+template = np.eye(len(AMINO_ACIDS), dtype=np.float32)
 
 
 class OneHotEncodingEmbedder(EmbedderInterface):
@@ -40,7 +41,7 @@ class OneHotEncodingEmbedder(EmbedderInterface):
     embedding_dimension = len(AMINO_ACIDS)
     name = "one_hot_encoding"
 
-    def _embed_single(self, sequence: str) -> ndarray:
+    def _embed_single(self, sequence: str) -> np.ndarray:
         """
         Generates a one-hot encoded array for a given amino acid sequence.
 
@@ -55,11 +56,11 @@ class OneHotEncodingEmbedder(EmbedderInterface):
             A numpy array where each row corresponds to an amino acid in the sequence,
             represented as a one-hot vector.
         """
-        one_hot = [AMINO_ACIDS == i for i in sequence]
-        return numpy.stack(one_hot).astype(numpy.float32)
+        indices = [index_map[aa] for aa in sequence]
+        return template[indices]
 
     @staticmethod
-    def reduce_per_protein(embedding: ndarray) -> ndarray:
+    def reduce_per_protein(embedding: np.ndarray) -> np.ndarray:
         """
         Calculates the mean of one-hot encoded vectors of a protein to get its average composition.
 
