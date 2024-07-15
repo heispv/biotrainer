@@ -11,11 +11,29 @@ AMINO_ACIDS = numpy.asarray(list("ACDEFGHIKLMNPQRSTVWXY"))
 
 
 class OneHotEncodingEmbedder(EmbedderInterface):
-    """Baseline embedder: One hot encoding as per-residue embedding, amino acid composition for per-protein
+    """
+    Implements one-hot encoding for amino acid sequences as a baseline embedder.
 
-    This embedder is meant to be used as naive baseline for comparing different types of inputs or training method.
+    This class provides a naive baseline implementation for one-hot encoding of amino acids, used
+    to compare various input types or training methodologies in bioinformatics. The class supports
+    optional parameters for consistency with more complex models, though options like device
+    specifications are not utilized here.
 
-    While option such as device aren't used, you may still pass them for consistency.
+    Attributes:
+    -----------
+    number_of_layers : int
+        Number of encoding layers; here it is always 1 as only a single layer is used for encoding.
+    embedding_dimension : int
+        Dimension of the embedding, equal to the number of recognized amino acids.
+    name : str
+        Name of the embedder, set to 'one_hot_encoding'.
+
+    Methods:
+    --------
+    _embed_single(sequence: str) -> ndarray
+        Encodes a single amino acid sequence into a one-hot encoded numpy array.
+    reduce_per_protein(embedding: ndarray) -> ndarray
+        Computes the average one-hot encoding across a sequence to represent its composition.
     """
 
     number_of_layers = 1
@@ -23,10 +41,41 @@ class OneHotEncodingEmbedder(EmbedderInterface):
     name = "one_hot_encoding"
 
     def _embed_single(self, sequence: str) -> ndarray:
+        """
+        Generates a one-hot encoded array for a given amino acid sequence.
+
+        Parameters:
+        -----------
+        sequence : str
+            A string representing a valid amino acid sequence.
+
+        Returns:
+        --------
+        ndarray
+            A numpy array where each row corresponds to an amino acid in the sequence,
+            represented as a one-hot vector.
+        """
         one_hot = [AMINO_ACIDS == i for i in sequence]
         return numpy.stack(one_hot).astype(numpy.float32)
 
     @staticmethod
     def reduce_per_protein(embedding: ndarray) -> ndarray:
-        """This returns the amino acid composition of the sequence as vector"""
+        """
+        Calculates the mean of one-hot encoded vectors of a protein to get its average composition.
+
+        Parameters:
+        -----------
+        embedding : ndarray
+            A numpy array of one-hot encoded vectors for a sequence.
+
+        Returns:
+        --------
+        ndarray
+            A single vector that represents the average presence of each amino acid in the sequence.
+
+        Notes:
+        ------
+        - This function is useful for reducing the sequence representation to a fixed-size vector,
+          irrespective of the sequence length.
+        """
         return embedding.mean(axis=0)
