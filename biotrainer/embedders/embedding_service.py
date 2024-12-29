@@ -199,14 +199,9 @@ class EmbeddingService:
             int: The maximum number of embeddings that can fit in memory.
 
         Notes:
-            - The number 18 was determined experimentally as a factor correlating the 
-              embedding size to the memory usage, indicating that each unit of 
-              embedding size corresponds to approximately 18 bytes of memory.
-            - The multiplier 0.75 is a safety margin to ensure that the memory usage 
-              stays within 75% of the available system memory, reducing the risk of 
-              running out of RAM during operations.
+            - Double-precision floating-point in Python takes 24 bytes of memory.
         """
-        max_embedding_fit = int(0.75 * (psutil.virtual_memory().available / (embedding.size * 18)))
+        max_embedding_fit = int(psutil.virtual_memory().available / (embedding.size * 24))
         max_embedding_fit = 1 if max_embedding_fit == 0 else max_embedding_fit
         return max_embedding_fit
 
